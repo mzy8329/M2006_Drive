@@ -99,7 +99,6 @@ void CanSerialTask(void const *argument)
     osDelay(200);
     uint32_t PreviousWakeTime = osKernelSysTick();
 
-    motor[0].CtrlData.currentRef = 1000;
     for(;;)
     {
         for(int id = 0; id < 4; id++)
@@ -118,7 +117,7 @@ void CanSerialTask(void const *argument)
             }
         }
         CanTransmitMotor(motor[0].CtrlData.currentOut, motor[1].CtrlData.currentOut,  motor[2].CtrlData.currentOut,  motor[3].CtrlData.currentOut);
-        printf("rpm:%f  angle:%f  current:%f  out:%f \n", motor[0].FdbData.rpm, motor[0].globalAngle.angleAll, motor[0].FdbData.current, motor[0].CtrlData.currentOut);
+        //printf("rpm:%f  angle:%f  current:%f  out:%f \n", motor[0].FdbData.rpm, motor[0].globalAngle.angleAll, motor[0].FdbData.current, motor[0].CtrlData.currentOut);
 
 
         osDelayUntil(&PreviousWakeTime, 1000/(float)CAN_SERIAL_FREQUENCY);

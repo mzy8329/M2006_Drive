@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <mavlink>
-  <version>1</version>
+  <version>3</version>
   <messages>
     <message id="42" name="DJI_MOTOR">
       <description>include motor fdbData and ctrlData</description>

@@ -7,6 +7,8 @@
 #include "user_defination.h"
 #include "mavlink.h"
 
+
+
 static mavlink_system_t mavlink_system = 
 {
     1,  // System ID
@@ -20,7 +22,7 @@ typedef struct
 
     struct
     {
-        uint8_t RxChannel;
+        uint8_t RxCh;
         mavlink_channel_t chan;
         mavlink_message_t msg;
         mavlink_status_t statu;

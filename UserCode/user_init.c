@@ -25,7 +25,7 @@ void USER_INIT()
 
     lightTaskStart();
     CanSerialTaskStart();
-    MavlinkSerialTaskStart();
+    SerialTaskStart();
 }
 
 

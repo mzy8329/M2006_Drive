@@ -69,7 +69,9 @@
     "files": [],
     "folders": []
   },
-  "excludeList": [],
+  "excludeList": [
+    "UserCode/mavlink_uart_serial.c"
+  ],
   "outDir": "build",
   "deviceName": null,
   "packDir": null,

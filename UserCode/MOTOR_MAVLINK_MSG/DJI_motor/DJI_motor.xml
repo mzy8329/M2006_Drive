@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<mavlink>
+  <version>1</version>
+  <messages>
+    <message id="42" name="DJI_MOTOR">
+      <description>include motor fdbData and ctrlData</description>
+      <field type="int8_t" name="id">motor id</field>
+      <field type="float" name="angle_fdb">angle_fdb</field>
+      <field type="float" name="rpm_fdb">rpm_fdb</field>
+      <field type="float" name="current_fdb">current_fdb</field>
+      <field type="float" name="current_out">current_out</field>
+    </message>
+  </messages>
+</mavlink>

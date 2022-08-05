@@ -6,7 +6,6 @@
 
 #include "user_defination.h"
 
-void CanSerialTask(void const *argument);
-
+void CanSerialTaskStart();
 
 #endif // !CAN_SERIAL_H

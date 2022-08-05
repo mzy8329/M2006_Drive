@@ -73,6 +73,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 }
 
 
+
 void CAN_INIT()
 {
     CAN_FilterTypeDef sFilterConfig;
@@ -95,15 +96,38 @@ void CAN_INIT()
 void CanSerialTask(void const *argument)
 {
     CAN_INIT();
-
     osDelay(200);
     uint32_t PreviousWakeTime = osKernelSysTick();
 
+    motor[0].CtrlData.currentRef = 1000;
     for(;;)
     {
+        for(int id = 0; id < 4; id++)
+        {
+            if(motor[id].CtrlData.currentRef > motor[id].CtrlData.currentMax)
+            {
+                motor[id].CtrlData.currentOut = motor[id].CtrlData.currentMax;
+            }
+            else if(motor[id].CtrlData.currentRef < -motor[id].CtrlData.currentMax)
+            {
+                motor[id].CtrlData.currentOut = -motor[id].CtrlData.currentMax;
+            }
+            else
+            {
+                motor[id].CtrlData.currentOut = motor[id].CtrlData.currentRef;
+            }
+        }
         CanTransmitMotor(motor[0].CtrlData.currentOut, motor[1].CtrlData.currentOut,  motor[2].CtrlData.currentOut,  motor[3].CtrlData.currentOut);
+        printf("rpm:%f  angle:%f  current:%f  out:%f \n", motor[0].FdbData.rpm, motor[0].globalAngle.angleAll, motor[0].FdbData.current, motor[0].CtrlData.currentOut);
+
 
         osDelayUntil(&PreviousWakeTime, 1000/(float)CAN_SERIAL_FREQUENCY);
     }
 
+}
+
+void CanSerialTaskStart()
+{
+    osThreadDef(CanSerial, CanSerialTask, osPriorityNormal, 0, 512);
+	osThreadCreate(osThread(CanSerial), NULL);
 }

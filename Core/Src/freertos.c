@@ -106,6 +106,9 @@ void MX_FREERTOS_Init(void) {
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
+  
+  USER_INIT();
+  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_RESET);
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 

@@ -69,6 +69,8 @@ void UART_INIT()
 {
     UartBag.header[0] = HEADER[0];
     UartBag.header[1] = HEADER[1];
+
+    HAL_UART_Receive_IT(&huart6, &RxBuffer, 2*BAG_LENGTH);
 }
 
 void SerialTask()

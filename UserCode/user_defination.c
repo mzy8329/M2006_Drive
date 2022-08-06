@@ -7,8 +7,8 @@ int _write (int fd, char *pBuffer, int size)
 {  
     for (int i = 0; i < size; i++)  
     {  
-        while((USART6->SR&0X40)==0);          //等待上一次串口数据发送完成  
-        USART6->DR = (uint8_t) pBuffer[i];    //写DR,串口1将发送数据
+        while((UART8->SR&0X40)==0);          //等待上一次串口数据发送完成  
+        UART8->DR = (uint8_t) pBuffer[i];    //写DR,串口1将发送数据
     }  
     return size;  
 }

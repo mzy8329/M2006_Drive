@@ -90,6 +90,7 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN1_Init();
   MX_USART6_UART_Init();
+  MX_UART8_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -107,7 +108,6 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    
 
     /* USER CODE BEGIN 3 */
   }

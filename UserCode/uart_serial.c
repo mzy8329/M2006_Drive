@@ -57,6 +57,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
                 tempBag.header[1] == HEADER[1]
                 ){
             motor[tempBag.id].CtrlData.currentRef = tempBag.current_out;
+            printf("current_out: %f", tempBag.current_out);
             break;
         }
     }

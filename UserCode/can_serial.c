@@ -103,20 +103,19 @@ void CanSerialTask(void const *argument)
     int a = 0;
     for(;;)
     {
-        motor[0].RefData.angle_ref = 100;
-        motor[0].RefData.rpm_ref = -1;
-        motor[0].RefData.current_ref = -1;
-        MotorCtrl();
+        // motor[0].RefData.angle_ref = 100;
+        // motor[0].RefData.rpm_ref = -1;
+        // motor[0].RefData.current_ref = -1;
+        
 
+        // if(++i>5)
+        // {
+        //     i = 0;
 
-        if(++i>5)
-        {
-            i = 0;
-            // printf("e1:%f e2:%f fdb:%f\n", motor[0].PID.angle_pid.err[0], motor[0].PID.angle_pid.err[1], motor[0].globalAngle.angleAll);
-            // printf("%f %f\n", motor[0].PID.rpm_pid.output, motor[0].FdbData.rpm);
-            printf("%f \n", motor[0].globalAngle.angleAll);
-        }
+        //     printf("%f \n", motor[0].globalAngle.angleAll);
+        // }
         // 
+        MotorCtrl();
         CanTransmitMotor(motor[0].current_out, motor[1].current_out,  motor[2].current_out,  motor[3].current_out);
         
         // osDelayUntil(&PreviousWakeTime, 1000/(float)CAN_SERIAL_FREQUENCY);

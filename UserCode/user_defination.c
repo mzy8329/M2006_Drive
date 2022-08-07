@@ -45,18 +45,18 @@ void MOTOR_INIT()
         motor[i].RefData.rpm_ref = 0;
         motor[i].RefData.current_ref = 0;
 
-        motor[i].PID.angle_pid.Kp = 9.0;
-        motor[i].PID.angle_pid.Ki = 1.5;
-        motor[i].PID.angle_pid.Kd = 74.0;
+        motor[i].PID.angle_pid.Kp = 0.76;
+        motor[i].PID.angle_pid.Ki = 0.02;
+        motor[i].PID.angle_pid.Kd = 0;
         motor[i].PID.angle_pid.output = 0;
-        motor[i].PID.angle_pid.outputMax = 416;
-        motor[i].PID.angle_pid.outputMin = -416;
+        motor[i].PID.angle_pid.outputMax = 15000;
+        motor[i].PID.angle_pid.outputMin = -15000;
         motor[i].PID.angle_pid.err[0] = 0;
         motor[i].PID.angle_pid.err[1] = 0;
         
-        motor[i].PID.rpm_pid.Kp = 40;
-        motor[i].PID.rpm_pid.Ki = 0.08;
-        motor[i].PID.rpm_pid.Kd = 1.2;
+        motor[i].PID.rpm_pid.Kp = 1.1;
+        motor[i].PID.rpm_pid.Ki = 0.00039;
+        motor[i].PID.rpm_pid.Kd = 0;
         motor[i].PID.rpm_pid.output = 0;
         motor[i].PID.rpm_pid.outputMax = 8000;
         motor[i].PID.rpm_pid.outputMin = -8000;        
@@ -73,16 +73,14 @@ void MotorCtrl()
     {
         if(motor[i].RefData.angle_ref!=-1)
         {
-            PID_Cal(&motor[i].PID.angle_pid, motor[i].RefData.angle_ref, motor[i].globalAngle.angleAll);
-            PID_Cal(&motor[i].PID.rpm_pid, motor[i].PID.angle_pid.output, motor[i].FdbData.rpm);
+            PID_Cal(&motor[i].PID.angle_pid, motor[i].RefData.angle_ref * 36.0, motor[i].AxisData.axisAngleAll);
+            PID_Cal(&motor[i].PID.rpm_pid, motor[i].PID.angle_pid.output, motor[i].AxisData.axisRpm);
             motor[i].current_out = motor[i].PID.rpm_pid.output;
-            // printf("1 \n");
         }
         else if(motor[i].RefData.rpm_ref!=-1)
         {
-            PID_Cal(&motor[i].PID.rpm_pid, motor[i].RefData.rpm_ref, motor[i].FdbData.rpm);
+            PID_Cal(&motor[i].PID.rpm_pid, motor[i].RefData.rpm_ref * 36.0, motor[i].AxisData.axisRpm);
             motor[i].current_out = motor[i].PID.rpm_pid.output;
-            // printf("2 \n");
         }
         else if(motor[i].RefData.current_ref!=-1)
         {
@@ -98,12 +96,10 @@ void MotorCtrl()
             {
                 motor[i].current_out = motor[i].RefData.current_ref;
             }
-            // printf("3 \n");
         }
         else
         {
             motor[i].current_out = 0;
-            // printf("4 \n");
         }
     }
 }

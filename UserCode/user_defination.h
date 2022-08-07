@@ -47,6 +47,13 @@ typedef struct
 
     struct
     {
+        float axisAngleAll;
+        float axisRpm;
+    }AxisData;
+    
+
+    struct
+    {
         float angleAll;
         int round;
         float angleOffset;

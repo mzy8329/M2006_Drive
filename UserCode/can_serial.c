@@ -31,8 +31,10 @@ void CanTransmitMotor(int16_t motor0_Iq, int16_t motor1_Iq, int16_t motor2_Iq, i
 void UpdataMotor(DJI_Motor_s *Motor, uint8_t *CanData)
 {
     Motor->FdbData.angle = (int16_t)(CanData[0] << 8 | CanData[1]);
-    Motor->FdbData.rpm = (int16_t)(CanData[2] << 8 | CanData[3])/36.0;
+    Motor->AxisData.axisRpm = (int16_t)(CanData[2] << 8 | CanData[3]);
     Motor->FdbData.current = (int16_t)(CanData[4] << 8 | CanData[5])/M2006_KT;
+
+    Motor->FdbData.rpm = Motor->AxisData.axisRpm/36.0;
 
     static float angle_last = 0;
     if(Motor->FdbData.angle - angle_last > 5000)
@@ -43,7 +45,8 @@ void UpdataMotor(DJI_Motor_s *Motor, uint8_t *CanData)
     {
         Motor->globalAngle.round++;
     }
-    Motor->globalAngle.angleAll = (Motor->FdbData.angle + Motor->globalAngle.round * 8191.0 - Motor->globalAngle.angleOffset)/8191.0/36.0 * 360.0;
+    Motor->AxisData.axisAngleAll = (Motor->FdbData.angle + Motor->globalAngle.round * 8191.0 - Motor->globalAngle.angleOffset)/8191.0*360;
+    Motor->globalAngle.angleAll = Motor->AxisData.axisAngleAll/36.0;
 
     angle_last = Motor->FdbData.angle;
 }
@@ -109,12 +112,12 @@ void CanSerialTask(void const *argument)
         
 
         // if(++i>5)
-        // {
+        // { 
         //     i = 0;
 
         //     printf("%f \n", motor[0].globalAngle.angleAll);
         // }
-        // 
+        
         MotorCtrl();
         CanTransmitMotor(motor[0].current_out, motor[1].current_out,  motor[2].current_out,  motor[3].current_out);
         

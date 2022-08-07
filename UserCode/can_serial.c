@@ -32,7 +32,7 @@ void UpdataMotor(DJI_Motor_s *Motor, uint8_t *CanData)
 {
     Motor->FdbData.angle = (int16_t)(CanData[0] << 8 | CanData[1]);
     Motor->AxisData.axisRpm = (int16_t)(CanData[2] << 8 | CanData[3]);
-    Motor->FdbData.current = (int16_t)(CanData[4] << 8 | CanData[5])/M2006_KT;
+    Motor->FdbData.current = (int16_t)(CanData[4] << 8 | CanData[5])/M2006_KT + 600;
 
     Motor->FdbData.rpm = Motor->AxisData.axisRpm/36.0;
 
@@ -110,13 +110,13 @@ void CanSerialTask(void const *argument)
         // motor[0].RefData.rpm_ref = -1;
         // motor[0].RefData.current_ref = -1;
         
-
         // if(++i>5)
         // { 
         //     i = 0;
 
-        //     printf("%f \n", motor[0].globalAngle.angleAll);
+        //     printf("%f \n", motor[0].FdbData.current);
         // }
+        
         
         MotorCtrl();
         CanTransmitMotor(motor[0].current_out, motor[1].current_out,  motor[2].current_out,  motor[3].current_out);

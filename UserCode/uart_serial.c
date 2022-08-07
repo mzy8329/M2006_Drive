@@ -73,6 +73,7 @@ void UartTransmit(DJI_Motor_s *Motor)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
+    
     if(huart == &huart6)
     {
         for (int i = 0; i < sizeof(RxBuffer); ++i)
@@ -82,7 +83,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
             {
                 motor[tempBag.id].RefData.angle_ref = tempBag.angle_ref;
                 motor[tempBag.id].RefData.rpm_ref = tempBag.rpm_ref;
-                motor[tempBag.id].RefData.current_ref = tempBag.current_ref;
+                motor[tempBag.id].RefData.current_ref = tempBag.current_ref;         
+
+                printf("%f \n", motor[0].RefData.angle_ref);
                 break;
             }
         }
@@ -96,6 +99,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 void UART_INIT()
 {
     HAL_UART_Receive_IT(&huart6, &RxBuffer, 2*BAG_LENGTH);
+    printf("uart_init \n");
 }
 
 void SerialTask()

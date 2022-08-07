@@ -10,8 +10,8 @@
 #define M2006_CURRENT_MAX 10000
 #define M2006_KT 0.18
 
-#define CAN_SERIAL_FREQUENCY 200
-#define UART_SERIAL_FREQUENCY 500
+#define CAN_SERIAL_FREQUENCY 500
+#define UART_SERIAL_FREQUENCY 100
 
 int _write(int fd, char *pBuffer, int size);
 int fputc(int ch, FILE *stream);

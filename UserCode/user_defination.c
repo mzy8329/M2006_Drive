@@ -13,13 +13,98 @@ int _write (int fd, char *pBuffer, int size)
     return size;  
 }
 
+
+
+
+void PID_Cal(PID_s *pid, float ref, float fdb)
+{
+    float err_now = ref - fdb;
+    pid->output += pid->Kp*(err_now - pid->err[1]) + pid->Ki*err_now + pid->Kd*(err_now - 2*pid->err[0] + pid->err[1]);
+    if(pid->output > pid->outputMax)
+    {
+        pid->output = pid->outputMax;
+    }
+    if(pid->output < pid->outputMin)
+    {
+        pid->output = pid->outputMin;
+    } 
+
+    pid->err[1] = pid->err[0];
+    pid->err[0] = err_now;
+}
+
+
+
 void MOTOR_INIT()
 {
     for(int i = 0; i < 4; i++)
     {
         motor[i].id = i;
-        motor[i].CtrlData.currentOut = 0;
-        motor[i].CtrlData.currentMax = 8000;
+        motor[i].globalAngle.round = 0;
+        motor[i].RefData.angle_ref = 0;
+        motor[i].RefData.rpm_ref = 0;
+        motor[i].RefData.current_ref = 0;
+
+        motor[i].PID.angle_pid.Kp = 9.0;
+        motor[i].PID.angle_pid.Ki = 1.5;
+        motor[i].PID.angle_pid.Kd = 74.0;
+        motor[i].PID.angle_pid.output = 0;
+        motor[i].PID.angle_pid.outputMax = 416;
+        motor[i].PID.angle_pid.outputMin = -416;
+        motor[i].PID.angle_pid.err[0] = 0;
+        motor[i].PID.angle_pid.err[1] = 0;
+        
+        motor[i].PID.rpm_pid.Kp = 40;
+        motor[i].PID.rpm_pid.Ki = 0.08;
+        motor[i].PID.rpm_pid.Kd = 1.2;
+        motor[i].PID.rpm_pid.output = 0;
+        motor[i].PID.rpm_pid.outputMax = 8000;
+        motor[i].PID.rpm_pid.outputMin = -8000;        
+        motor[i].PID.rpm_pid.err[0] = 0;
+        motor[i].PID.rpm_pid.err[1] = 0;
+    }
+}
+
+
+void MotorCtrl()
+{
+
+    for(int i = 0; i < 4; i++)
+    {
+        if(motor[i].RefData.angle_ref!=-1)
+        {
+            PID_Cal(&motor[i].PID.angle_pid, motor[i].RefData.angle_ref, motor[i].globalAngle.angleAll);
+            PID_Cal(&motor[i].PID.rpm_pid, motor[i].PID.angle_pid.output, motor[i].FdbData.rpm);
+            motor[i].current_out = motor[i].PID.rpm_pid.output;
+            // printf("1 \n");
+        }
+        else if(motor[i].RefData.rpm_ref!=-1)
+        {
+            PID_Cal(&motor[i].PID.rpm_pid, motor[i].RefData.rpm_ref, motor[i].FdbData.rpm);
+            motor[i].current_out = motor[i].PID.rpm_pid.output;
+            // printf("2 \n");
+        }
+        else if(motor[i].RefData.current_ref!=-1)
+        {
+            if(motor[i].RefData.current_ref>8000)
+            {
+                motor[i].current_out = 8000;
+            } 
+            else if(motor[i].RefData.current_ref<-8000)
+            {
+                motor[i].current_out = -8000;   
+            }
+            else
+            {
+                motor[i].current_out = motor[i].RefData.current_ref;
+            }
+            // printf("3 \n");
+        }
+        else
+        {
+            motor[i].current_out = 0;
+            // printf("4 \n");
+        }
     }
 }
 

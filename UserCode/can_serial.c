@@ -12,14 +12,14 @@ void CanTransmitMotor(int16_t motor0_Iq, int16_t motor1_Iq, int16_t motor2_Iq, i
 	TxMessage.RTR=CAN_RTR_DATA;
 
     uint8_t TxData[8] = {0};
-    TxData[0] = (uint8_t)(motor0_Iq >> 8);
-	TxData[1] = (uint8_t)motor0_Iq;
-	TxData[2] = (uint8_t)(motor1_Iq >> 8);
-	TxData[3] = (uint8_t)motor1_Iq;
-	TxData[4] = (uint8_t)(motor2_Iq >> 8);
-	TxData[5] = (uint8_t)motor2_Iq;
-	TxData[6] = (uint8_t)(motor3_Iq >> 8);
-	TxData[7] = (uint8_t)motor3_Iq;
+    TxData[0] = (motor0_Iq >> 8);
+	TxData[1] = motor0_Iq;
+	TxData[2] = (motor1_Iq >> 8);
+	TxData[3] = motor1_Iq;
+	TxData[4] = (motor2_Iq >> 8);
+	TxData[5] = motor2_Iq;
+	TxData[6] = (motor3_Iq >> 8);
+	TxData[7] = motor3_Iq;
 
 	while(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) ;
 	if(HAL_CAN_AddTxMessage(&hcan1,&TxMessage,TxData, 0)!=HAL_OK)
@@ -31,7 +31,7 @@ void CanTransmitMotor(int16_t motor0_Iq, int16_t motor1_Iq, int16_t motor2_Iq, i
 void UpdataMotor(DJI_Motor_s *Motor, uint8_t *CanData)
 {
     Motor->FdbData.angle = (int16_t)(CanData[0] << 8 | CanData[1]);
-    Motor->FdbData.rpm = (int16_t)(CanData[2] << 8 | CanData[3]);
+    Motor->FdbData.rpm = (int16_t)(CanData[2] << 8 | CanData[3])/36.0;
     Motor->FdbData.current = (int16_t)(CanData[4] << 8 | CanData[5])/M2006_KT;
 
     static float angle_last = 0;
@@ -99,28 +99,28 @@ void CanSerialTask(void const *argument)
     osDelay(200);
     uint32_t PreviousWakeTime = osKernelSysTick();
 
+    static int i = 0;
+    int a = 0;
     for(;;)
     {
-        for(int id = 0; id < 4; id++)
+        motor[0].RefData.angle_ref = 100;
+        motor[0].RefData.rpm_ref = -1;
+        motor[0].RefData.current_ref = -1;
+        MotorCtrl();
+
+
+        if(++i>5)
         {
-            if(motor[id].CtrlData.currentRef > motor[id].CtrlData.currentMax)
-            {
-                motor[id].CtrlData.currentOut = motor[id].CtrlData.currentMax;
-            }
-            else if(motor[id].CtrlData.currentRef < -motor[id].CtrlData.currentMax)
-            {
-                motor[id].CtrlData.currentOut = -motor[id].CtrlData.currentMax;
-            }
-            else
-            {
-                motor[id].CtrlData.currentOut = motor[id].CtrlData.currentRef;
-            }
+            i = 0;
+            // printf("e1:%f e2:%f fdb:%f\n", motor[0].PID.angle_pid.err[0], motor[0].PID.angle_pid.err[1], motor[0].globalAngle.angleAll);
+            // printf("%f %f\n", motor[0].PID.rpm_pid.output, motor[0].FdbData.rpm);
+            printf("%f \n", motor[0].globalAngle.angleAll);
         }
-        CanTransmitMotor(motor[0].CtrlData.currentOut, motor[1].CtrlData.currentOut,  motor[2].CtrlData.currentOut,  motor[3].CtrlData.currentOut);
-        //printf("rpm:%f  angle:%f  current:%f  out:%f \n", motor[0].FdbData.rpm, motor[0].globalAngle.angleAll, motor[0].FdbData.current, motor[0].CtrlData.currentOut);
-
-
-        osDelayUntil(&PreviousWakeTime, 1000/(float)CAN_SERIAL_FREQUENCY);
+        // 
+        CanTransmitMotor(motor[0].current_out, motor[1].current_out,  motor[2].current_out,  motor[3].current_out);
+        
+        // osDelayUntil(&PreviousWakeTime, 1000/(float)CAN_SERIAL_FREQUENCY);
+        osDelay(1000/(float)CAN_SERIAL_FREQUENCY);
     }
 
 }

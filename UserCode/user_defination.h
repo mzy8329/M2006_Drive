@@ -6,17 +6,21 @@
 #include "gpio.h"
 
 
+#define CAN_SERIAL_FREQUENCY 500
+#define UART_SERIAL_FREQUENCY 80
+
+#define USE_IMPE_CTRL 0
+
 #define USE_MOTOR_NUM 1
 #define M2006_CURRENT_MAX 10000
 #define M2006_KT 0.18
 
-#define CAN_SERIAL_FREQUENCY 500
-#define UART_SERIAL_FREQUENCY 100
 
 int _write(int fd, char *pBuffer, int size);
 int fputc(int ch, FILE *stream);
 
 
+#if !USE_IMPE_CTRL
 typedef struct
 {
     float Kp;
@@ -30,7 +34,7 @@ typedef struct
 }PID_s;
 
 void PID_Cal(PID_s *pid, float ref, float fdb);
-
+#endif
 
 
 typedef struct
@@ -41,7 +45,7 @@ typedef struct
     {
         float angle;
         float rpm;
-        float current; 
+        float torque; 
         int msg_cnt;
     }FdbData;
 
@@ -66,11 +70,28 @@ typedef struct
         float current_ref;   
     }RefData;
     
+#if !USE_IMPE_CTRL
     struct
     {
         PID_s angle_pid;
         PID_s rpm_pid;
     }PID;
+#endif
+
+#if USE_IMPE_CTRL
+    struct
+    {
+        float Md;
+        float Dd;
+        float Kd;
+
+        float Mq;
+        float Cq;
+        float gq;
+    }IMPE;
+    
+#endif
+
 
     float current_out;
 }DJI_Motor_s;

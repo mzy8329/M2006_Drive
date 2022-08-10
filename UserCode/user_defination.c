@@ -13,9 +13,47 @@ int _write (int fd, char *pBuffer, int size)
     return size;  
 }
 
+void MOTOR_INIT()
+{
+    for(int i = 0; i < 4; i++)
+    {
+        motor[i].id = i;
+        motor[i].globalAngle.round = 0;
+        motor[i].RefData.angle_ref = 0;
+        motor[i].RefData.rpm_ref = 0;
+        motor[i].RefData.current_ref = 0;
+#if !USE_IMPE_CTRL
+        motor[i].PID.angle_pid.Kp = 5.5;
+        motor[i].PID.angle_pid.Ki = 0.35;
+        motor[i].PID.angle_pid.Kd = 25;
+        motor[i].PID.angle_pid.output = 0;
+        motor[i].PID.angle_pid.outputMax = 15000;
+        motor[i].PID.angle_pid.outputMin = -15000;
+        motor[i].PID.angle_pid.err[0] = 0;
+        motor[i].PID.angle_pid.err[1] = 0;
+        
+        motor[i].PID.rpm_pid.Kp = 2.5;
+        motor[i].PID.rpm_pid.Ki = 0.08;
+        motor[i].PID.rpm_pid.Kd = 1.0;
+        motor[i].PID.rpm_pid.output = 0;
+        motor[i].PID.rpm_pid.outputMax = 8000;
+        motor[i].PID.rpm_pid.outputMin = -8000;        
+        motor[i].PID.rpm_pid.err[0] = 0;
+        motor[i].PID.rpm_pid.err[1] = 0;
+#endif
 
+#if USE_IMPE_CTRL
+        motor[i].IMPE.Md = 0.1;
+        motor[i].IMPE.Dd = 0.1;
+        motor[i].IMPE.Kd = 0.1;
+        motor[i].IMPE.Mq = 0.00052;
+        motor[i].IMPE.Cq = 0.0;
+        motor[i].IMPE.gq = 0.0;
+#endif
+    }
+}
 
-
+#if !USE_IMPE_CTRL
 void PID_Cal(PID_s *pid, float ref, float fdb)
 {
     float err_now = ref - fdb;
@@ -32,39 +70,6 @@ void PID_Cal(PID_s *pid, float ref, float fdb)
     pid->err[1] = pid->err[0];
     pid->err[0] = err_now;
 }
-
-
-
-void MOTOR_INIT()
-{
-    for(int i = 0; i < 4; i++)
-    {
-        motor[i].id = i;
-        motor[i].globalAngle.round = 0;
-        motor[i].RefData.angle_ref = 0;
-        motor[i].RefData.rpm_ref = 0;
-        motor[i].RefData.current_ref = 0;
-
-        motor[i].PID.angle_pid.Kp = 0.76;
-        motor[i].PID.angle_pid.Ki = 0.02;
-        motor[i].PID.angle_pid.Kd = 0;
-        motor[i].PID.angle_pid.output = 0;
-        motor[i].PID.angle_pid.outputMax = 15000;
-        motor[i].PID.angle_pid.outputMin = -15000;
-        motor[i].PID.angle_pid.err[0] = 0;
-        motor[i].PID.angle_pid.err[1] = 0;
-        
-        motor[i].PID.rpm_pid.Kp = 1.1;
-        motor[i].PID.rpm_pid.Ki = 0.00039;
-        motor[i].PID.rpm_pid.Kd = 0;
-        motor[i].PID.rpm_pid.output = 0;
-        motor[i].PID.rpm_pid.outputMax = 8000;
-        motor[i].PID.rpm_pid.outputMin = -8000;        
-        motor[i].PID.rpm_pid.err[0] = 0;
-        motor[i].PID.rpm_pid.err[1] = 0;
-    }
-}
-
 
 void MotorCtrl()
 {
@@ -103,5 +108,20 @@ void MotorCtrl()
         }
     }
 }
+#endif
+
+
+#if USE_IMPE_CTRL
+
+void IMPE_CTRL()
+{
+    
+}
+
+
+#endif
+
+
+
 
 DJI_Motor_s motor[4];

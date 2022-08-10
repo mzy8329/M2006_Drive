@@ -32,7 +32,7 @@ void UpdataMotor(DJI_Motor_s *Motor, uint8_t *CanData)
 {
     Motor->FdbData.angle = (int16_t)(CanData[0] << 8 | CanData[1]);
     Motor->AxisData.axisRpm = (int16_t)(CanData[2] << 8 | CanData[3]);
-    Motor->FdbData.current = (int16_t)(CanData[4] << 8 | CanData[5])/M2006_KT + 600;
+    Motor->FdbData.torque = (int16_t)(CanData[4] << 8 | CanData[5]);
 
     Motor->FdbData.rpm = Motor->AxisData.axisRpm/36.0;
 
@@ -102,23 +102,45 @@ void CanSerialTask(void const *argument)
     osDelay(200);
     uint32_t PreviousWakeTime = osKernelSysTick();
 
-    static int i = 0;
+    int i = 0;
+    int up = 1;
     int a = 0;
     for(;;)
     {
-        // motor[0].RefData.angle_ref = 100;
-        // motor[0].RefData.rpm_ref = -1;
-        // motor[0].RefData.current_ref = -1;
-        
-        // if(++i>5)
-        // { 
-        //     i = 0;
-
-        //     printf("%f \n", motor[0].FdbData.current);
-        // }
-        
-        
+#if !USE_IMPE_CTRL        
+        motor[0].RefData.angle_ref = -1;
+        motor[0].RefData.rpm_ref = -1;
+        motor[0].RefData.current_ref = -1;
+        if(++i>5)
+        {
+            // if(up && a < 100)
+            // {
+            //     a++;
+            // }
+            // else if(up && a >= 100)
+            // {
+            //     up = 0;
+            // }
+            // else if(!up && a > -100)
+            // {
+            //     a--;
+            // }
+            // else if(!up && a <= -100)
+            // {
+            //     up = 1;
+            // }
+            i = 0;
+            // printf("%f,%f \n", motor[0].globalAngle.angleAll,motor[0].RefData.angle_ref);
+            printf("%f,%f \n", motor[0].RefData.current_ref, motor[0].FdbData.torque);
+        }
         MotorCtrl();
+
+#endif
+        
+#if USE_IMPE_CTRL
+        IMPE_CTRL();
+#endif
+
         CanTransmitMotor(motor[0].current_out, motor[1].current_out,  motor[2].current_out,  motor[3].current_out);
         
         // osDelayUntil(&PreviousWakeTime, 1000/(float)CAN_SERIAL_FREQUENCY);

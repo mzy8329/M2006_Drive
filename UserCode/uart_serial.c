@@ -23,7 +23,7 @@ typedef union
                 uint8_t id;
                 float angle_fdb;
                 float rpm_fdb;
-                float current_fdb;
+                float torque_fdb;
             }__attribute__((packed));
         };
     }__attribute__((packed));
@@ -62,7 +62,7 @@ void UartTransmit(DJI_Motor_s *Motor)
     UartBag.id = Motor->id;
     UartBag.angle_fdb = Motor->globalAngle.angleAll;
     UartBag.rpm_fdb = Motor->FdbData.rpm;
-    UartBag.current_fdb = Motor->FdbData.current;
+    UartBag.torque_fdb = Motor->FdbData.torque;
 
 
     HAL_UART_Transmit(&huart6, &UartBag, BAG_LENGTH, 10);
@@ -85,7 +85,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
                 motor[tempBag.id].RefData.rpm_ref = tempBag.rpm_ref;
                 motor[tempBag.id].RefData.current_ref = tempBag.current_ref;         
 
-                printf("%f \n", motor[0].RefData.angle_ref);
+                // printf("%f \n", motor[0].RefData.angle_ref);
                 break;
             }
         }

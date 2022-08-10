@@ -36,8 +36,8 @@ void MOTOR_INIT()
         motor[i].PID.rpm_pid.Ki = 0.08;
         motor[i].PID.rpm_pid.Kd = 1.0;
         motor[i].PID.rpm_pid.output = 0;
-        motor[i].PID.rpm_pid.outputMax = 8000;
-        motor[i].PID.rpm_pid.outputMin = -8000;        
+        motor[i].PID.rpm_pid.outputMax = 4000;
+        motor[i].PID.rpm_pid.outputMin = -4000;        
         motor[i].PID.rpm_pid.err[0] = 0;
         motor[i].PID.rpm_pid.err[1] = 0;
 #endif
@@ -88,13 +88,13 @@ void MotorCtrl()
         }
         else if(motor[i].RefData.current_ref!=-1)
         {
-            if(motor[i].RefData.current_ref>8000)
+            if(motor[i].RefData.current_ref>motor[i].PID.rpm_pid.outputMax)
             {
-                motor[i].current_out = 8000;
-            } 
-            else if(motor[i].RefData.current_ref<-8000)
+                motor[i].current_out = motor[i].PID.rpm_pid.outputMax;
+            }
+            else if(motor[i].RefData.current_ref<motor[i].PID.rpm_pid.outputMin)
             {
-                motor[i].current_out = -8000;   
+                motor[i].current_out = motor[i].PID.rpm_pid.outputMin;
             }
             else
             {

@@ -108,39 +108,42 @@ void CanSerialTask(void const *argument)
     for(;;)
     {
 #if !USE_IMPE_CTRL        
-        motor[0].RefData.angle_ref = -1;
-        motor[0].RefData.rpm_ref = -1;
-        motor[0].RefData.current_ref = -1;
-        if(++i>5)
-        {
-            // if(up && a < 100)
-            // {
-            //     a++;
-            // }
-            // else if(up && a >= 100)
-            // {
-            //     up = 0;
-            // }
-            // else if(!up && a > -100)
-            // {
-            //     a--;
-            // }
-            // else if(!up && a <= -100)
-            // {
-            //     up = 1;
-            // }
-            i = 0;
-            // printf("%f,%f \n", motor[0].globalAngle.angleAll,motor[0].RefData.angle_ref);
-            printf("%f,%f \n", motor[0].RefData.current_ref, motor[0].FdbData.torque);
-        }
+        // motor[0].RefData.angle_ref = -1;
+        // motor[0].RefData.rpm_ref = -1;
+        // motor[0].RefData.current_ref = -1;
+        // if(++i>5)
+        // {
+        //     // if(up && a < 100)
+        //     // {
+        //     //     a++;
+        //     // }
+        //     // else if(up && a >= 100)
+        //     // {
+        //     //     up = 0;
+        //     // }
+        //     // else if(!up && a > -100)
+        //     // {
+        //     //     a--;
+        //     // }
+        //     // else if(!up && a <= -100)
+        //     // {
+        //     //     up = 1;
+        //     // }
+        //     i = 0;
+        //     // printf("%f,%f \n", motor[0].globalAngle.angleAll,motor[0].RefData.angle_ref);
+        //     printf("%f,%f \n", motor[0].RefData.current_ref, motor[0].FdbData.torque);
+        // }
         MotorCtrl();
+        if(motor[0].globalAngle.angleAll < -240 || motor[0].globalAngle.angleAll > 1)
+        {
+            motor[0].current_out = 0;
+        }
 
 #endif
         
 #if USE_IMPE_CTRL
         IMPE_CTRL();
 #endif
-
         CanTransmitMotor(motor[0].current_out, motor[1].current_out,  motor[2].current_out,  motor[3].current_out);
         
         // osDelayUntil(&PreviousWakeTime, 1000/(float)CAN_SERIAL_FREQUENCY);

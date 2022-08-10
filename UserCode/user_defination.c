@@ -73,7 +73,6 @@ void PID_Cal(PID_s *pid, float ref, float fdb)
 
 void MotorCtrl()
 {
-
     for(int i = 0; i < 4; i++)
     {
         if(motor[i].RefData.angle_ref!=-1)
@@ -115,7 +114,7 @@ void MotorCtrl()
 
 void IMPE_CTRL()
 {
-    
+
 }
 
 

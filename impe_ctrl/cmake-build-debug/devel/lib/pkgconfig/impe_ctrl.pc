@@ -1,0 +1,8 @@
+prefix=/home/mzy/Code/work_space/UAV_ws/src/impe_ctrl/cmake-build-debug/devel
+
+Name: impe_ctrl
+Description: Description of impe_ctrl
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

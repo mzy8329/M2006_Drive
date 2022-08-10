@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/mzy/Code/work_space/UAV_ws/src/impe_ctrl/cmake-build-debug/devel/setup.sh

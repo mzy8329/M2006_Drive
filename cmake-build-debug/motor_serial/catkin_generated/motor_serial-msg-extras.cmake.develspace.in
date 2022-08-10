@@ -1,0 +1,2 @@
+set(motor_serial_MESSAGE_FILES "/home/mzy/Code/work_space/UAV_ws/src/motor_serial/msg/motor_data.msg;/home/mzy/Code/work_space/UAV_ws/src/motor_serial/msg/motor_ctrl.msg")
+set(motor_serial_SERVICE_FILES "")

@@ -1,0 +1,10 @@
+file(REMOVE_RECURSE
+  "/home/mzy/Code/work_space/UAV_ws/devel/lib/motor_ctrl/motor_ctrl"
+  "/home/mzy/Code/work_space/UAV_ws/devel/lib/motor_ctrl/motor_ctrl.pdb"
+  "CMakeFiles/motor_ctrl.dir/src/main.cpp.o"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/motor_ctrl.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

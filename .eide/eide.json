@@ -57,7 +57,6 @@
   },
   "uploader": "OpenOCD",
   "srcDirs": [
-    "./.eide/deps",
     "./Drivers",
     "./STM32CubeIDE",
     "./UserCode",

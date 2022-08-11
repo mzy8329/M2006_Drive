@@ -1,7 +1,24 @@
+/**
+ * @file can_serial.c
+ * @author mzy (mzy8329@163.com)
+ * @brief can通信线程，直接获取电机反馈信息以及控制电机
+ * @version 0.1
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include "can_serial.h"
 
 
-
+/**
+ * @brief 一次性发送四个电机的控制电流
+ * 
+ * @param motor0_Iq {int16_t}
+ * @param motor1_Iq {int16_t}
+ * @param motor2_Iq {int16_t}
+ * @param motor3_Iq {int16_t}
+ */
 void CanTransmitMotor(int16_t motor0_Iq, int16_t motor1_Iq, int16_t motor2_Iq, int16_t motor3_Iq)
 {
     CAN_TxHeaderTypeDef TxMessage;
@@ -28,14 +45,22 @@ void CanTransmitMotor(int16_t motor0_Iq, int16_t motor1_Iq, int16_t motor2_Iq, i
 	}
 }
 
+/**
+ * @brief 将can通信消息转化成电机信息
+ * 
+ * @param Motor 
+ * @param CanData 
+ */
 void UpdataMotor(DJI_Motor_s *Motor, uint8_t *CanData)
 {
     Motor->FdbData.angle = (int16_t)(CanData[0] << 8 | CanData[1]);
     Motor->AxisData.axisRpm = (int16_t)(CanData[2] << 8 | CanData[3]);
     Motor->FdbData.torque = (int16_t)(CanData[4] << 8 | CanData[5]);
 
+    //M2006减速比为36
     Motor->FdbData.rpm = Motor->AxisData.axisRpm/36.0;
 
+    //M2006转子转一圈（360）对应的返回值为8191
     static float angle_last = 0;
     if(Motor->FdbData.angle - angle_last > 5000)
     {
@@ -51,6 +76,11 @@ void UpdataMotor(DJI_Motor_s *Motor, uint8_t *CanData)
     angle_last = Motor->FdbData.angle;
 }
 
+/**
+ * @brief can通信Callback
+ * 
+ * @param hcan 
+ */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
     CAN_RxHeaderTypeDef RxHeader;
@@ -63,6 +93,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
     int id = RxHeader.StdId - 0x201;
     if(id >= 0 && id <= 4)
     {
+        //获取绝对编码器的初始值
         if(motor[id].FdbData.msg_cnt < 20)
         {
             motor[id].globalAngle.angleOffset = (int16_t)(CanReceiveData[0] << 8 | CanReceiveData[1]);
@@ -76,7 +107,10 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 }
 
 
-
+/**
+ * @brief 初始化can通信
+ * 
+ */
 void CAN_INIT()
 {
     CAN_FilterTypeDef sFilterConfig;
@@ -96,62 +130,35 @@ void CAN_INIT()
     HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
 }
 
+/**
+ * @brief can通信线程，以固定频率给电机发送控制电流
+ * 
+ * @param argument 
+ */
 void CanSerialTask(void const *argument)
 {
     CAN_INIT();
     osDelay(200);
-    uint32_t PreviousWakeTime = osKernelSysTick();
 
-    int i = 0;
-    int up = 1;
-    int a = 0;
     for(;;)
     {
-#if !USE_IMPE_CTRL        
-        // motor[0].RefData.angle_ref = -1;
-        // motor[0].RefData.rpm_ref = -1;
-        // motor[0].RefData.current_ref = -1;
-        // if(++i>5)
-        // {
-        //     // if(up && a < 100)
-        //     // {
-        //     //     a++;
-        //     // }
-        //     // else if(up && a >= 100)
-        //     // {
-        //     //     up = 0;
-        //     // }
-        //     // else if(!up && a > -100)
-        //     // {
-        //     //     a--;
-        //     // }
-        //     // else if(!up && a <= -100)
-        //     // {
-        //     //     up = 1;
-        //     // }
-        //     i = 0;
-        //     // printf("%f,%f \n", motor[0].globalAngle.angleAll,motor[0].RefData.angle_ref);
-        //     printf("%f,%f \n", motor[0].RefData.current_ref, motor[0].FdbData.torque);
-        // }
         MotorCtrl();
-        if(motor[0].globalAngle.angleAll < -240 || motor[0].globalAngle.angleAll > 1)
+        //位置保护
+        if(motor[0].globalAngle.angleAll < -240 || motor[0].globalAngle.angleAll > -5)
         {
             motor[0].current_out = 0;
         }
 
-#endif
-        
-#if USE_IMPE_CTRL
-        IMPE_CTRL();
-#endif
         CanTransmitMotor(motor[0].current_out, motor[1].current_out,  motor[2].current_out,  motor[3].current_out);
-        
-        // osDelayUntil(&PreviousWakeTime, 1000/(float)CAN_SERIAL_FREQUENCY);
         osDelay(1000/(float)CAN_SERIAL_FREQUENCY);
     }
 
 }
 
+/**
+ * @brief 注册can通信线程
+ * 
+ */
 void CanSerialTaskStart()
 {
     osThreadDef(CanSerial, CanSerialTask, osPriorityNormal, 0, 512);

@@ -27,7 +27,7 @@ include_directories(
 )
 
 
-add_executable(impe_ctrl src/main.cpp src/M2006.cpp include/M2006.h)
+add_executable(impe_ctrl src/main.cpp)
 target_link_libraries(impe_ctrl ${catkin_LIBRARIES})
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)

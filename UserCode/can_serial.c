@@ -19,7 +19,7 @@
  * @param motor2_Iq {int16_t}
  * @param motor3_Iq {int16_t}
  */
-void CanTransmitMotor(int16_t motor0_Iq, int16_t motor1_Iq, int16_t motor2_Iq, int16_t motor3_Iq)
+void CanTransmitMotor0123(int16_t motor0_Iq, int16_t motor1_Iq, int16_t motor2_Iq, int16_t motor3_Iq)
 {
     CAN_TxHeaderTypeDef TxMessage;
 
@@ -53,6 +53,7 @@ void CanTransmitMotor(int16_t motor0_Iq, int16_t motor1_Iq, int16_t motor2_Iq, i
  */
 void UpdataMotor(DJI_Motor_s *Motor, uint8_t *CanData)
 {
+    
     Motor->FdbData.angle = (int16_t)(CanData[0] << 8 | CanData[1]);
     Motor->AxisData.axisRpm = (int16_t)(CanData[2] << 8 | CanData[3]);
     Motor->FdbData.torque = (int16_t)(CanData[4] << 8 | CanData[5]);
@@ -61,20 +62,21 @@ void UpdataMotor(DJI_Motor_s *Motor, uint8_t *CanData)
     Motor->FdbData.rpm = Motor->AxisData.axisRpm/36.0;
 
     //M2006转子转一圈（360）对应的返回值为8191
-    static float angle_last = 0;
-    if(Motor->FdbData.angle - angle_last > 5000)
+    static float angle_last[4] = {4000,4000,4000,4000};
+    if(Motor->FdbData.angle - angle_last[Motor->id] > 5000)
     {
         Motor->globalAngle.round--;
     }
-    if(Motor->FdbData.angle - angle_last < -5000)
+    if(Motor->FdbData.angle - angle_last[Motor->id] < -5000)
     {
         Motor->globalAngle.round++;
     }
     Motor->AxisData.axisAngleAll = (Motor->FdbData.angle + Motor->globalAngle.round * 8191.0 - Motor->globalAngle.angleOffset)/8191.0*360;
     Motor->globalAngle.angleAll = Motor->AxisData.axisAngleAll/36.0;
 
-    angle_last = Motor->FdbData.angle;
+    angle_last[Motor->id] = Motor->FdbData.angle;
 }
+
 
 /**
  * @brief can通信Callback
@@ -91,7 +93,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
     }
 
     int id = RxHeader.StdId - 0x201;
-    if(id >= 0 && id <= 4)
+    if(id >= 0 && id < USE_MOTOR_NUM)
     {
         //获取绝对编码器的初始值
         if(motor[id].FdbData.msg_cnt < 20)
@@ -103,6 +105,10 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
         {
             UpdataMotor(&motor[id], CanReceiveData);
         }
+    }
+    else
+    {
+        Error_Handler(); 
     }
 }
 
@@ -140,16 +146,30 @@ void CanSerialTask(void const *argument)
     CAN_INIT();
     osDelay(200);
 
+    int i = 0;
     for(;;)
     {
         MotorCtrl();
         //位置保护
-        if(motor[0].globalAngle.angleAll < -240 || motor[0].globalAngle.angleAll > -5)
+        for(int i = 0; i < USE_MOTOR_NUM; i++)
         {
-            motor[0].current_out = 0;
+            if(MOTOR_IS_POS[i])
+            {
+                if(motor[i].globalAngle.angleAll < MOTOR_MIN[i] || motor[i].globalAngle.angleAll > MOTOR_MAX[i])
+                {
+                    motor[i].current_out = 0;
+                }
+            }
         }
+        if(i++ > 10)
+        {
+            printf("1:%.2f, 2:%.2f, 3:%.2f \n", motor[0].RefData.current_ref, motor[1].RefData.current_ref, motor[2].RefData.current_ref);
+            i = 0;
+        }
+        
+        CanTransmitMotor0123(motor[0].current_out, motor[1].current_out,  motor[2].current_out,  motor[3].current_out);
+        // CanTransmitMotor0123(0, 0, 0, 0);
 
-        CanTransmitMotor(motor[0].current_out, motor[1].current_out,  motor[2].current_out,  motor[3].current_out);
         osDelay(1000/(float)CAN_SERIAL_FREQUENCY);
     }
 

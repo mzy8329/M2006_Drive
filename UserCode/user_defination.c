@@ -12,8 +12,6 @@
 #include "user_defination.h"
 
 
-UART_HandleTypeDef *UART_Mavlink = &huart6;
-
 //linux下 gcc对应的printf重定向，将uart8作为输出，debug用
 int _write (int fd, char *pBuffer, int size)  
 {  
@@ -28,7 +26,7 @@ int _write (int fd, char *pBuffer, int size)
 //windows MDK对应的printf重定向
 int fputc(int ch, FILE *stream)
 {
-	while (HAL_UART_Transmit(&UART_Printf_Config_huart, (uint8_t *)&ch, 1, 0xffff) == HAL_BUSY);
+	while (HAL_UART_Transmit(&huart8, (uint8_t *)&ch, 1, 0xffff) == HAL_BUSY);
 	return ch;
 }
 
@@ -39,7 +37,7 @@ int fputc(int ch, FILE *stream)
  */
 void MOTOR_INIT()
 {
-    for(int i = 0; i < 4; i++)
+    for(int i = 0; i < USE_MOTOR_NUM; i++)
     {
         motor[i].id = i;
         motor[i].globalAngle.round = 0;
@@ -138,6 +136,8 @@ void MotorCtrl()
     }
 }
 
-
+int MOTOR_IS_POS[USE_MOTOR_NUM] = {1, 1, 1};
+float MOTOR_MIN[USE_MOTOR_NUM] = {-350, -60, 5};
+float MOTOR_MAX[USE_MOTOR_NUM] = {0, 60, 125};
 
 DJI_Motor_s motor[4];

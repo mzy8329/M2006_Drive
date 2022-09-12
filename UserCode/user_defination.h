@@ -20,10 +20,14 @@
 #define CAN_SERIAL_FREQUENCY 500
 #define UART_SERIAL_FREQUENCY 80
 
-#define USE_MOTOR_NUM 1
+#define USE_MOTOR_NUM 3
 #define M2006_CURRENT_MAX 10000
 #define M2006_KT 0.18
 
+
+extern int MOTOR_IS_POS[USE_MOTOR_NUM];
+extern float MOTOR_MIN[USE_MOTOR_NUM];
+extern float MOTOR_MAX[USE_MOTOR_NUM];
 
 int _write(int fd, char *pBuffer, int size);
 int fputc(int ch, FILE *stream);

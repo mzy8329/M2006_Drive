@@ -1,101 +1,97 @@
 {
   "name": "M2006_Drive",
   "type": "ARM",
-  "mode": "Debug",
-  "toolchain": "GCC",
-  "dependenceList": [
-    {
-      "groupName": "custom",
-      "depList": [
-        {
-          "name": "default",
-          "incList": [
-            "./.eide/deps"
-          ],
-          "libList": [],
-          "sourceDirList": [],
-          "defineList": [
-            "USE_HAL_DRIVER",
-            "STM32F427xx"
-          ]
-        }
-      ]
-    }
-  ],
-  "compileConfig": {
-    "cpuType": "Cortex-M4",
-    "floatingPointHardware": "single",
-    "useCustomScatterFile": false,
-    "scatterFilePath": "STM32CubeIDE/STM32F427IIHX_FLASH.ld",
-    "storageLayout": {
-      "RAM": [
-        {
-          "tag": "IRAM",
-          "id": 1,
-          "mem": {
-            "startAddr": "0x20000000",
-            "size": "0x5000"
-          },
-          "isChecked": true,
-          "noInit": false
-        }
-      ],
-      "ROM": [
-        {
-          "tag": "IROM",
-          "id": 1,
-          "mem": {
-            "startAddr": "0x08000000",
-            "size": "0x10000"
-          },
-          "isChecked": true,
-          "isStartup": true
-        }
-      ]
-    },
-    "options": "null"
-  },
-  "uploader": "OpenOCD",
+  "dependenceList": [],
   "srcDirs": [
-    "./Drivers",
-    "./STM32CubeIDE",
-    "./UserCode",
-    "./Core",
-    "./Middlewares"
+    "Drivers",
+    "STM32CubeIDE",
+    "UserCode",
+    "Core",
+    "Middlewares"
   ],
   "virtualFolder": {
     "name": "<virtual_root>",
     "files": [],
     "folders": []
   },
-  "excludeList": [
-    "UserCode/mavlink_uart_serial.c"
-  ],
   "outDir": "build",
   "deviceName": null,
   "packDir": null,
-  "uploadConfig": {
-    "bin": "",
-    "target": "stm32f4x",
-    "interface": "stlink",
-    "baseAddr": "0x08000000"
-  },
-  "uploadConfigMap": {
-    "JLink": {
-      "bin": "",
-      "baseAddr": "",
-      "cpuInfo": {
-        "vendor": "null",
-        "cpuName": "null"
-      },
-      "proType": 1,
-      "speed": 8000,
-      "otherCmds": ""
-    }
-  },
   "miscInfo": {
     "uid": "5894698d0470bbe3a5e629a8b126bce9"
   },
-  "targets": {},
-  "version": "3.2"
+  "targets": {
+    "Debug": {
+      "excludeList": [
+        "UserCode/mavlink_uart_serial.c"
+      ],
+      "toolchain": "GCC",
+      "compileConfig": {
+        "cpuType": "Cortex-M4",
+        "floatingPointHardware": "single",
+        "useCustomScatterFile": false,
+        "scatterFilePath": "STM32CubeIDE/STM32F427IIHX_FLASH.ld",
+        "storageLayout": {
+          "RAM": [
+            {
+              "tag": "IRAM",
+              "id": 1,
+              "mem": {
+                "startAddr": "0x20000000",
+                "size": "0x5000"
+              },
+              "isChecked": true,
+              "noInit": false
+            }
+          ],
+          "ROM": [
+            {
+              "tag": "IROM",
+              "id": 1,
+              "mem": {
+                "startAddr": "0x08000000",
+                "size": "0x10000"
+              },
+              "isChecked": true,
+              "isStartup": true
+            }
+          ]
+        },
+        "options": "null"
+      },
+      "uploader": "OpenOCD",
+      "uploadConfig": {
+        "bin": "",
+        "target": "stm32f4x",
+        "interface": "stlink",
+        "baseAddr": "0x08000000"
+      },
+      "uploadConfigMap": {
+        "JLink": {
+          "bin": "",
+          "baseAddr": "",
+          "cpuInfo": {
+            "vendor": "null",
+            "cpuName": "null"
+          },
+          "proType": 1,
+          "speed": 8000,
+          "otherCmds": ""
+        }
+      },
+      "custom_dep": {
+        "name": "default",
+        "incList": [
+          ".eide/deps"
+        ],
+        "libList": [],
+        "sourceDirList": [],
+        "defineList": [
+          "USE_HAL_DRIVER",
+          "STM32F427xx"
+        ]
+      }
+    }
+  },
+  "version": "3.3"
 }

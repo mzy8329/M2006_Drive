@@ -25,7 +25,11 @@
             "editor.insertSpaces": true,
             "editor.tabSize": 4,
             "editor.autoIndent": "advanced"
-        }
+        },
+        "python.autoComplete.extraPaths": [
+            "/home/mzy/Code/workSpace/impe_ws/devel/lib/python3/dist-packages",
+            "/opt/ros/noetic/lib/python3/dist-packages"
+        ]
     },
     "extensions": {
         "recommendations": [

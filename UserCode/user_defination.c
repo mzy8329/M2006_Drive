@@ -137,7 +137,7 @@ void MotorCtrl()
 }
 
 int MOTOR_IS_POS[USE_MOTOR_NUM] = {1, 1, 1};
-float MOTOR_MIN[USE_MOTOR_NUM] = {-350, 0, 0};
-float MOTOR_MAX[USE_MOTOR_NUM] = {0, 250, -270};
+float MOTOR_MIN[USE_MOTOR_NUM] = {-350, 0, -270};
+float MOTOR_MAX[USE_MOTOR_NUM] = {0, 250, 0};
 
 DJI_Motor_s motor[4];

@@ -3,11 +3,12 @@
   "type": "ARM",
   "dependenceList": [],
   "srcDirs": [
-    "Drivers",
-    "STM32CubeIDE",
     "UserCode",
+    "STM32CubeIDE",
+    "Middlewares",
+    "Drivers",
     "Core",
-    "Middlewares"
+    "build"
   ],
   "virtualFolder": {
     "name": "<virtual_root>",
@@ -30,7 +31,7 @@
         "cpuType": "Cortex-M4",
         "floatingPointHardware": "single",
         "useCustomScatterFile": false,
-        "scatterFilePath": "STM32CubeIDE/STM32F427IIHX_FLASH.ld",
+        "scatterFilePath": "STM32CubeIDE/STM32F407IEHX_FLASH.ld",
         "storageLayout": {
           "RAM": [
             {
@@ -88,7 +89,7 @@
         "sourceDirList": [],
         "defineList": [
           "USE_HAL_DRIVER",
-          "STM32F427xx"
+          "STM32F407xx"
         ]
       }
     }

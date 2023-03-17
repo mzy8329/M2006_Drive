@@ -18,7 +18,7 @@ void lightTask()
 {
     for(;;)
     {
-        HAL_GPIO_TogglePin(GPIOF, GPIO_PIN_14);
+        HAL_GPIO_TogglePin(GPIOH, GPIO_PIN_10);
         osDelay(500);
 
     }

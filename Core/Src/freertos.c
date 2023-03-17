@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include 
+#include "user_init.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -108,7 +108,8 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
 
-
+  USER_INIT();
+  HAL_GPIO_WritePin(GPIOH, GPIO_PIN_11, GPIO_PIN_SET); 
   /* USER CODE END RTOS_THREADS */
 
 }

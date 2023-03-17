@@ -87,7 +87,7 @@ void UartTransmit(DJI_Motor_s *Motor)
     UartBag.torque_fdb = Motor->FdbData.torque;
 
 
-    HAL_UART_Transmit(&huart6, &UartBag, BAG_LENGTH, 10);
+    HAL_UART_Transmit(&huart1, &UartBag, BAG_LENGTH, 10);
 }
 
 
@@ -100,7 +100,7 @@ void UartTransmit(DJI_Motor_s *Motor)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     //usart6为上下位机通信所用串口
-    if(huart == &huart6)
+    if(huart == &huart1)
     {
         for (int i = 0; i < sizeof(RxBuffer); ++i)
         {
@@ -115,7 +115,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         }
 
         //发和收每次都是两个包，降低频率换取通信准确性
-        HAL_UART_Receive_IT(&huart6, &RxBuffer, 2*BAG_LENGTH);
+        HAL_UART_Receive_IT(&huart1, &RxBuffer, 2*BAG_LENGTH);
     }
 
 
@@ -128,7 +128,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
  */
 void UART_INIT()
 {
-    HAL_UART_Receive_IT(&huart6, &RxBuffer, 2*BAG_LENGTH);
+    HAL_UART_Receive_IT(&huart1, &RxBuffer, 2*BAG_LENGTH);
     printf("uart_init \n");
 }
 

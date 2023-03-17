@@ -12,24 +12,6 @@
 #include "user_defination.h"
 
 
-//linux下 gcc对应的printf重定向，将uart8作为输出，debug用
-int _write (int fd, char *pBuffer, int size)  
-{  
-    for (int i = 0; i < size; i++)  
-    {  
-        while((UART8->SR&0X40)==0);          //等待上一次串口数据发送完成  
-        UART8->DR = (uint8_t) pBuffer[i];    //写DR,串口8将发送数据
-    }  
-    return size;  
-}
-
-//windows MDK对应的printf重定向
-int fputc(int ch, FILE *stream)
-{
-	while (HAL_UART_Transmit(&huart8, (uint8_t *)&ch, 1, 0xffff) == HAL_BUSY);
-	return ch;
-}
-
 
 /**
  * @brief 初始化所有电机
@@ -137,7 +119,7 @@ void MotorCtrl()
 }
 
 int MOTOR_IS_POS[USE_MOTOR_NUM] = {1, 1, 1};
-float MOTOR_MIN[USE_MOTOR_NUM] = {-350, 0, 0};
-float MOTOR_MAX[USE_MOTOR_NUM] = {0, -250, 270};
+float MOTOR_MIN[USE_MOTOR_NUM] = {-350, -200, 0};
+float MOTOR_MAX[USE_MOTOR_NUM] = {0, 250, 270};
 
 DJI_Motor_s motor[4];

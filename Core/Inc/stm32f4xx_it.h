@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2022 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -54,7 +54,7 @@ void UsageFault_Handler(void);
 void DebugMon_Handler(void);
 void CAN1_RX0_IRQHandler(void);
 void TIM2_IRQHandler(void);
-void USART6_IRQHandler(void);
+void USART1_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */

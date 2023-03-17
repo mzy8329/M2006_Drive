@@ -25,7 +25,8 @@
             "editor.insertSpaces": true,
             "editor.tabSize": 4,
             "editor.autoIndent": "advanced"
-        }
+        },
+        "EIDE.OpenOCD.ExePath": "/usr/local/bin/openocd"
     },
     "extensions": {
         "recommendations": [

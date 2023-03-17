@@ -1,1 +1,3 @@
-{}
+{
+    "EIDE.OpenOCD.ExePath": "/usr/local/bin/openocd"
+}
